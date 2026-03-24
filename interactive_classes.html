@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Tools</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --border: #dbe3ee;
+      --text: #0f172a;
+      --muted: #5b6474;
+      --accent: #2563eb;
+      --danger: #A51C30;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 32px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      max-width: 700px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      min-width: 280px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .shared-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .shared-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .section-copy {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      font: inherit;
+      font-size: 0.98rem;
+      color: var(--text);
+      background: white;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .student-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .student-pill {
+      background: #eef4ff;
+      color: #1e3a8a;
+      border: 1px solid #cfe0ff;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    .count-box {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 18px;
+    }
+
+    .count-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 6px 0;
+    }
+
+    .board {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .board-header {
+      padding: 24px 24px 8px;
+    }
+
+    .board-title {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .board-desc {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 0 24px 24px;
+    }
+
+    .tab-button {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+    }
+
+    .tab-button.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 22px;
+      padding: 0 24px 24px;
+    }
+
+    .panel, .side-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: var(--panel-soft);
+      padding: 22px;
+    }
+
+    .tool-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .tool-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: white;
+      border: 1px solid var(--border);
+      font-size: 1.3rem;
+    }
+
+    .tool-title {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .tool-blurb {
+      margin: 4px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .applet-box {
+      min-height: 320px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      text-align: left;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+    }
+
+    .applet-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .applet-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 460px;
+    }
+
+    .side-panel h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .side-panel p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .info-card {
+      margin-top: 14px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .info-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .table-sort-ui {
+      width: 100%;
+      text-align: left;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 14px;
+      align-items: end;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .control-group {
+      min-width: 180px;
+    }
+
+    .control-label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .control-select,
+    .control-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: white;
+    }
+
+    .primary-button {
+      border: 0;
+      background: var(--accent);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .danger-button {
+      background: var(--danger);
+      box-shadow: 0 10px 24px rgba(220, 38, 38, 0.22);
+    }
+
+    .secondary-button {
+      background: #334155;
+      box-shadow: 0 10px 24px rgba(51, 65, 85, 0.22);
+    }
+
+    .primary-button:hover {
+      filter: brightness(0.98);
+    }
+
+    .primary-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .table-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .table-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      background: #f8fbff;
+    }
+
+    .table-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .empty-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .roulette-ui {
+      width: 100%;
+      text-align: center;
+    }
+
+    .roulette-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .roulette-wheel {
+      width: min(360px, 78vw);
+      height: min(360px, 78vw);
+      border-radius: 50%;
+      border: 10px solid #ffffff;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), inset 0 0 0 1px var(--border);
+      position: relative;
+      transition: transform 4s cubic-bezier(0.2, 0.9, 0.15, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: white;
+    }
+
+    .roulette-center {
+      position: absolute;
+      z-index: 3;
+      width: 30%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      text-align: center;
+      font-weight: 700;
+      line-height: 1.2;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .wheel-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .wheel-label {
+      font-size: 11px;
+      font-weight: 700;
+      fill: #0f172a;
+      pointer-events: none;
+    }
+
+    .roulette-pointer {
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 28px solid var(--accent);
+      filter: drop-shadow(0 6px 10px rgba(37, 99, 235, 0.28));
+      margin-bottom: -8px;
+    }
+
+    .roulette-status {
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    .winner-card {
+      border: 1px solid #cfe0ff;
+      background: #eef4ff;
+      color: #1e3a8a;
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      min-width: min(360px, 100%);
+    }
+
+    .small-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .free-response-ui {
+      width: 100%;
+    }
+
+    .free-response-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .response-qr-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      background: #f8fbff;
+    }
+
+    .response-board-wrap {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: #f8fbff;
+      padding: 18px;
+      min-height: 320px;
+    }
+
+    .response-board {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .response-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .response-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .response-text {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .response-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1e3a8a;
+      font-weight: 700;
+      border: 1px solid #cfe0ff;
+    }
+
+    @media (max-width: 900px) {
+      .shared-grid,
+      .content,
+      .free-response-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 18px 12px;
+      }
+
+      .hero,
+      .shared-card,
+      .board {
+        border-radius: 24px;
+      }
+
+      .board-header,
+      .tabs,
+      .content {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .tabs {
+        gap: 10px;
+      }
+
+      .tab-button {
+        width: 100%;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow">Classroom Dashboard</div>
+            <h1>Classroom Tools</h1>
+            <p class="subtitle">
+              A browser-based home for your teaching utilities.
+            </p>
+          </div>
+
+          <div class="stats">
+            <div class="stat">Interacive</div>
+            <div class="stat">Online use</div>
+            <div class="stat">Shared roster</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="shared-card">
+        <div class="shared-grid">
+          <div>
+            <h2 class="section-title">Student Roster</h2>
+            <p class="section-copy">
+              Enter student names separated by commas. Phone sign-ups are fetched from Google Apps Script and added to the shared roster.
+            </p>
+
+            <textarea id="studentInput" placeholder="Ada Lovelace, Emmy Noether, Srinivasa Ramanujan, Katherine Johnson"></textarea>
+
+            <div class="controls-row" style="margin-top: 14px;">
+              <button id="refreshRosterBtn" class="primary-button secondary-button" type="button">Refresh phone sign-ups</button>
+              <button id="clearRosterBtn" class="primary-button danger-button" type="button">Clear today's phone roster</button>
+            </div>
+
+ <div class="info-card" style="margin-top: 18px;">
+  <button
+    id="toggleSignupPanelBtn"
+    type="button"
+    class="primary-button secondary-button"
+    style="width:100%; display:flex; justify-content:space-between; align-items:center;"
+  >
+    <span id="signupPanelLabel">Enable Online Signup</span>
+    <span id="signupPanelChevron">+</span>
+  </button>
+
+  <div
+    id="signupPanelBody"
+    style="display:none; margin-top:12px;"
+  >
+    <p class="section-copy" style="margin-top: 8px; margin-bottom: 12px;">
+      Students can scan this QR code to open the sign-up form on their phones.
+    </p>
+    <div id="qrCode" style="display:flex; justify-content:center; margin-bottom:12px;"></div>
+    <button
+      id="copySignupUrlBtn"
+      class="primary-button secondary-button"
+      type="button"
+      style="width:100%; margin-top:8px;"
+    >
+      Copy sign-up link
+    </button>
+  </div>
+</div>
+
+
+            <div class="student-list" id="studentList"></div>
+          </div>
+
+          <div class="count-box">
+            <div class="eyebrow" style="margin-bottom: 2px;">Roster summary</div>
+            <div class="count-number" id="studentCount">0</div>
+            <div class="section-copy" style="margin: 0;">
+              students currently available to every tool.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="board">
+        <div class="board-header">
+          <h2 class="board-title">Tool Board</h2>
+          <p class="board-desc">Switch between applets using the tabs below.</p>
+        </div>
+
+        <div class="tabs" id="tabs"></div>
+
+        <div class="content">
+          <div class="panel">
+            <div class="tool-head">
+              <div class="tool-icon" id="toolIcon">▦</div>
+              <div>
+                <h2 class="tool-title" id="toolTitle">Table Sort</h2>
+                <p class="tool-blurb" id="toolBlurb">
+                  Arrange students into tables and organize classroom groupings.
+                </p>
+              </div>
+            </div>
+
+            <div class="applet-box" id="appletBox"></div>
+          </div>
+
+          <aside class="side-panel">
+            <h3>Shared data</h3>
+            <p>
+              Every applet can access the same combined roster, so you only need to enter names once.
+            </p>
+
+            <div class="info-card">
+              <strong>Current students</strong>
+              <div class="student-list" id="sideStudentList"></div>
+            </div>
+
+            <div class="info-card">
+              <strong>Current focus</strong>
+              <span id="currentFocus">Table Sort is selected and ready to be built first.</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+  <script>
+    const tabs = [
+      {
+        id: 'table-sort',
+        label: 'Table Sort',
+        icon: '▦',
+        blurb: 'Arrange students into tables and organize classroom groupings.'
+      },
+      {
+        id: 'cold-call',
+        label: 'Cold Call',
+        icon: '👥',
+        blurb: 'Run fair, quick student selection for participation.'
+      },
+      {
+        id: 'free-response',
+        label: 'Free Responses',
+        icon: '💬',
+        blurb: 'Collect live student responses from phones onto a shared board.'
+      }
+    ];
+
+    let activeTab = 'table-sort';
+    let manualStudents = [];
+    let remoteStudents = [];
+    let students = [];
+    let tableCount = 4;
+    let tableAssignments = [];
+    let coldCallWinner = '';
+    let rouletteRotation = 0;
+    let coldCallSpinning = false;
+    let liveResponses = [];
+    let signupPanelOpen = false;
+    
+    const tabsContainer = document.getElementById('tabs');
+    const toolIcon = document.getElementById('toolIcon');
+    const toolTitle = document.getElementById('toolTitle');
+    const toolBlurb = document.getElementById('toolBlurb');
+    const currentFocus = document.getElementById('currentFocus');
+    const studentInput = document.getElementById('studentInput');
+    const studentList = document.getElementById('studentList');
+    const sideStudentList = document.getElementById('sideStudentList');
+    const studentCount = document.getElementById('studentCount');
+    const appletBox = document.getElementById('appletBox');
+    const refreshRosterBtn = document.getElementById('refreshRosterBtn');
+    const clearRosterBtn = document.getElementById('clearRosterBtn');
+
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxs7_jSobEWCTPxcCTuBIRA4E7E-RrKZ3Ih_4VGZdFs-6a0T_2QRHR9dJ6r8-cVNdfuTA/exec';
+    const RESPONSE_FORM_URL = `${APPS_SCRIPT_URL}?mode=responseForm`;
+
+    function parseStudents(input) {
+      return input
+        .split(/[\n,]+/)
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function recomputeSharedRoster() {
+      students = [...manualStudents, ...remoteStudents];
+      renderStudents();
+    }
+
+    function renderStudentPills(container, names) {
+      container.innerHTML = '';
+
+      if (!names.length) {
+        const empty = document.createElement('div');
+        empty.style.color = 'var(--muted)';
+        empty.style.fontSize = '0.95rem';
+        empty.textContent = 'No students entered yet.';
+        container.appendChild(empty);
+        return;
+      }
+
+      names.forEach(name => {
+        const pill = document.createElement('div');
+        pill.className = 'student-pill';
+        pill.textContent = name;
+        container.appendChild(pill);
+      });
+    }
+
+    function renderStudents() {
+      renderStudentPills(studentList, students);
+      renderStudentPills(sideStudentList, students);
+      studentCount.textContent = students.length;
+      renderApplet();
+    }
+
+    function loadRosterFromAppsScript() {
+      const callbackName = 'handleRoster_' + Date.now();
+      const script = document.createElement('script');
+
+      window[callbackName] = function (data) {
+        if (data && data.ok && Array.isArray(data.students)) {
+          remoteStudents = data.students;
+          recomputeSharedRoster();
+        }
+
+        delete window[callbackName];
+        script.remove();
+      };
+
+      script.src = `${APPS_SCRIPT_URL}?mode=roster&prefix=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    function clearTodayRoster() {
+      const confirmed = window.confirm('Clear all phone sign-ups from today’s roster?');
+      if (!confirmed) return;
+
+      const callbackName = 'handleClear_' + Date.now();
+      const script = document.createElement('script');
+
+      window[callbackName] = function (data) {
+        if (data && data.ok) {
+          remoteStudents = [];
+          recomputeSharedRoster();
+          loadRosterFromAppsScript();
+        } else {
+          alert('Could not clear the phone roster.');
+        }
+
+        delete window[callbackName];
+        script.remove();
+      };
+
+      script.src = `${APPS_SCRIPT_URL}?mode=clear&prefix=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    function loadResponsesFromAppsScript() {
+      const callbackName = 'handleResponses_' + Date.now();
+      const script = document.createElement('script');
+
+      window[callbackName] = function (data) {
+        if (data && data.ok && Array.isArray(data.responses)) {
+          liveResponses = data.responses;
+          if (activeTab === 'free-response') {
+            renderFreeResponseApplet();
+          }
+        }
+
+        delete window[callbackName];
+        script.remove();
+      };
+
+      script.src = `${APPS_SCRIPT_URL}?mode=responses&prefix=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    function clearResponses() {
+      const confirmed = window.confirm('Clear all live free responses?');
+      if (!confirmed) return;
+
+      const callbackName = 'handleClearResponses_' + Date.now();
+      const script = document.createElement('script');
+
+      window[callbackName] = function (data) {
+        if (data && data.ok) {
+          liveResponses = [];
+          if (activeTab === 'free-response') {
+            renderFreeResponseApplet();
+          }
+          loadResponsesFromAppsScript();
+        } else {
+          alert('Could not clear responses.');
+        }
+
+        delete window[callbackName];
+        script.remove();
+      };
+
+      script.src = `${APPS_SCRIPT_URL}?mode=clearResponses&prefix=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    studentInput.addEventListener('input', () => {
+      manualStudents = parseStudents(studentInput.value);
+      recomputeSharedRoster();
+    });
+
+    refreshRosterBtn.addEventListener('click', loadRosterFromAppsScript);
+    clearRosterBtn.addEventListener('click', clearTodayRoster);
+
+    function renderTabs() {
+      tabsContainer.innerHTML = '';
+      tabs.forEach((tab) => {
+        const button = document.createElement('button');
+        button.className = 'tab-button' + (tab.id === activeTab ? ' active' : '');
+        button.textContent = tab.label;
+        button.addEventListener('click', () => {
+          activeTab = tab.id;
+          renderTabs();
+          renderContent();
+        });
+        tabsContainer.appendChild(button);
+      });
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function generateTableAssignments() {
+      if (!students.length) {
+        tableAssignments = [];
+        renderApplet();
+        return;
+      }
+
+      const shuffled = shuffle(students);
+      const tables = Array.from({ length: tableCount }, () => []);
+
+      shuffled.forEach((student, index) => {
+        tables[index % tableCount].push(student);
+      });
+
+      tableAssignments = tables;
+      renderApplet();
+    }
+
+    function renderTableSortApplet() {
+      const countText = students.length === 1 ? '1 student' : `${students.length} students`;
+      const assignmentsHtml = tableAssignments.length
+        ? `<div class="table-results">${tableAssignments
+            .map((group, index) => `
+              <div class="table-card">
+                <div class="table-card-title">Table ${index + 1}</div>
+                <div class="student-list">
+                  ${group.length
+                    ? group.map(name => `<div class="student-pill">${escapeHtml(name)}</div>`).join('')
+                    : '<div class="empty-note">No students assigned.</div>'}
+                </div>
+              </div>
+            `)
+            .join('')}</div>`
+        : `<p class="applet-copy">No assignments yet. Choose a number of tables and press <strong>Generate random assignments</strong>.</p>`;
+
+      appletBox.innerHTML = `
+        <div class="table-sort-ui">
+          <div class="controls-row">
+            <div class="control-group">
+              <label for="tableCountSelect" class="control-label">Number of tables</label>
+              <select id="tableCountSelect" class="control-select">
+                ${Array.from({ length: 20 }, (_, i) => i + 1)
+                  .map(n => `<option value="${n}" ${n === tableCount ? 'selected' : ''}>${n}</option>`)
+                  .join('')}
+              </select>
+            </div>
+            <button id="generateTablesBtn" class="primary-button">Generate random assignments</button>
+          </div>
+
+          <p class="applet-copy">Using the shared roster of ${countText}.</p>
+          ${assignmentsHtml}
+        </div>
+      `;
+
+      document.getElementById('tableCountSelect').addEventListener('change', (event) => {
+        tableCount = Number(event.target.value);
+      });
+
+      document.getElementById('generateTablesBtn').addEventListener('click', generateTableAssignments);
+    }
+
+    function polarToCartesian(cx, cy, r, angleDeg) {
+      const angleRad = (angleDeg - 90) * Math.PI / 180;
+      return {
+        x: cx + r * Math.cos(angleRad),
+        y: cy + r * Math.sin(angleRad)
+      };
+    }
+
+    function describeSlicePath(cx, cy, r, startAngle, endAngle) {
+      const start = polarToCartesian(cx, cy, r, endAngle);
+      const end = polarToCartesian(cx, cy, r, startAngle);
+      const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+      return [
+        `M ${cx} ${cy}`,
+        `L ${start.x} ${start.y}`,
+        `A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+        'Z'
+      ].join(' ');
+    }
+
+	function renderSignupPanel() {
+  const toggleBtn = document.getElementById('toggleSignupPanelBtn');
+  const panelBody = document.getElementById('signupPanelBody');
+  const panelLabel = document.getElementById('signupPanelLabel');
+  const panelChevron = document.getElementById('signupPanelChevron');
+
+  if (!toggleBtn || !panelBody || !panelLabel || !panelChevron) return;
+
+  panelBody.style.display = signupPanelOpen ? 'block' : 'none';
+  panelLabel.textContent = signupPanelOpen ? 'Online Signup Enabled' : 'Enable Online Signup';
+  panelChevron.textContent = signupPanelOpen ? '−' : '+';
+
+  toggleBtn.onclick = () => {
+    signupPanelOpen = !signupPanelOpen;
+    renderSignupPanel();
+    if (signupPanelOpen) {
+      renderSignupQrCode();
+    }
+  };
+
+  if (signupPanelOpen) {
+    renderSignupQrCode();
+  }
+}
+
+function renderSignupQrCode() {
+  const qrContainer = document.getElementById('qrCode');
+  const copyButton = document.getElementById('copySignupUrlBtn');
+
+  if (!signupPanelOpen || !qrContainer || !copyButton) return;
+
+  qrContainer.innerHTML = '';
+
+  new QRCode(qrContainer, {
+    text: APPS_SCRIPT_URL,
+    width: 180,
+    height: 180
+  });
+
+  copyButton.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(APPS_SCRIPT_URL);
+      copyButton.textContent = 'Copied!';
+      setTimeout(() => {
+        copyButton.textContent = 'Copy sign-up link';
+      }, 1500);
+    } catch (err) {
+      copyButton.textContent = 'Copy failed';
+      setTimeout(() => {
+        copyButton.textContent = 'Copy sign-up link';
+      }, 1500);
+    }
+  };
+}
+
+    function buildWheelSvg(names) {
+      const colors = ['#dbeafe', '#bfdbfe', '#c7d2fe', '#ddd6fe', '#e9d5ff', '#d1fae5', '#fde68a', '#fecdd3'];
+      const size = 360;
+      const center = size / 2;
+      const radius = 170;
+      const labelRadius = 118;
+      const sliceAngle = 360 / names.length;
+
+      const slices = names.map((name, index) => {
+        const startAngle = index * sliceAngle;
+        const endAngle = startAngle + sliceAngle;
+        const midAngle = startAngle + sliceAngle / 2;
+        const labelPoint = polarToCartesian(center, center, labelRadius, midAngle);
+        const rotation = midAngle - 90;
+        const safeName = escapeHtml(name.length > 14 ? name.slice(0, 14) + '…' : name);
+
+        return `
+          <path d="${describeSlicePath(center, center, radius, startAngle, endAngle)}" fill="${colors[index % colors.length]}" stroke="#ffffff" stroke-width="2"></path>
+          <text x="${labelPoint.x}" y="${labelPoint.y}" text-anchor="middle" dominant-baseline="middle" class="wheel-label" transform="rotate(${rotation} ${labelPoint.x} ${labelPoint.y})">${safeName}</text>
+        `;
+      }).join('');
+
+      return `
+        <svg viewBox="0 0 ${size} ${size}" class="wheel-svg" aria-hidden="true">
+          ${slices}
+        </svg>
+      `;
+    }
+
+    function renderColdCallApplet() {
+      const countText = students.length === 1 ? '1 student is' : `${students.length} students are`;
+      const statusText = students.length
+        ? `${countText} on the shared roster. Press spin to choose a student at random.`
+        : 'Add students to the shared roster first, then spin the wheel.';
+
+      const wheelMarkup = students.length
+        ? buildWheelSvg(students)
+        : '<div class="applet-copy"></div>';
+
+      appletBox.innerHTML = `
+        <div class="roulette-ui">
+          <div class="roulette-wrap">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-wheel" id="rouletteWheel" style="transform: rotate(${rouletteRotation}deg);">
+              ${wheelMarkup}
+              <div class="roulette-center" id="rouletteCenter">${coldCallSpinning ? 'Spinning...' : '&#x1F644'}</div>
+            </div>
+            <button id="spinRouletteBtn" class="primary-button" ${students.length ? '' : 'disabled'}>
+              ${coldCallSpinning ? 'Spinning...' : 'Spin roulette'}
+            </button>
+            <div class="roulette-status">${statusText}</div>
+            <div class="winner-card" id="winnerCard">${coldCallWinner ? `Selected student: ${escapeHtml(coldCallWinner)}` : 'No student selected yet.'}</div>
+          </div>
+        </div>
+      `;
+
+      const spinButton = document.getElementById('spinRouletteBtn');
+      if (spinButton) {
+        spinButton.disabled = !students.length || coldCallSpinning;
+        spinButton.addEventListener('click', spinRoulette);
+      }
+    }
+
+    function spinRoulette() {
+      if (!students.length || coldCallSpinning) return;
+
+      coldCallSpinning = true;
+      const spinButton = document.getElementById('spinRouletteBtn');
+      const wheel = document.getElementById('rouletteWheel');
+      const center = document.getElementById('rouletteCenter');
+      const winnerCard = document.getElementById('winnerCard');
+
+      const randomIndex = Math.floor(Math.random() * students.length);
+      const winner = students[randomIndex];
+      const sliceAngle = 360 / students.length;
+      const centerAngle = randomIndex * sliceAngle + sliceAngle / 2;
+      const targetRotation = (360 - centerAngle) % 360;
+      const currentNormalized = ((rouletteRotation % 360) + 360) % 360;
+      let delta = targetRotation - currentNormalized;
+      if (delta < 0) delta += 360;
+      const extraTurns = 360 * (5 + Math.floor(Math.random() * 3));
+      const nextRotation = rouletteRotation + extraTurns + delta;
+
+      if (spinButton) {
+        spinButton.disabled = true;
+        spinButton.textContent = 'Spinning...';
+      }
+      if (center) {
+        center.textContent = 'Spinning...';
+      }
+      if (winnerCard) {
+        winnerCard.textContent = 'Selecting student...';
+      }
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (wheel) {
+            wheel.style.transform = `rotate(${nextRotation}deg)`;
+          }
+        });
+      });
+
+      setTimeout(() => {
+        rouletteRotation = nextRotation;
+        coldCallWinner = winner;
+        coldCallSpinning = false;
+        renderColdCallApplet();
+      }, 4000);
+    }
+
+    function formatResponseTime(value) {
+      if (!value) return 'Just now';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+
+   function renderFreeResponseApplet() {
+  const responseCards = liveResponses.length
+    ? liveResponses
+        .slice()
+        .reverse()
+        .map((item, index) => `
+          <div class="response-card">
+            <div class="response-meta">
+              <span>${item.name ? escapeHtml(item.name) : `Response ${liveResponses.length - index}`}</span>
+              <span>${formatResponseTime(item.timestamp)}</span>
+            </div>
+            <div class="response-text">${escapeHtml(item.text || '')}</div>
+          </div>
+        `)
+        .join('')
+    : `<div class="empty-note">Scan the QR code to submit your answer.</div>`;
+
+  appletBox.innerHTML = `
+    <div class="free-response-ui">
+      <div class="free-response-layout">
+        <div class="response-qr-card">
+          <div class="applet-title">Student submission QR code</div>
+          <div id="responseQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
+          <button
+            id="copyResponseUrlBtn"
+            class="primary-button secondary-button"
+            type="button"
+            style="width:100%; margin-top:0;"
+          >
+            Copy response link
+          </button>
+
+          <div class="controls-row" style="margin-top: 16px; margin-bottom: 0;">
+            <button id="refreshResponsesBtn" class="primary-button secondary-button" type="button">Refresh responses</button>
+            <button id="clearResponsesBtn" class="primary-button danger-button" type="button">Clear responses</button>
+          </div>
+        </div>
+
+        <div class="response-board-wrap">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div>
+              <div class="applet-title" style="margin-bottom: 4px;">Live response board</div>
+              <p class="applet-copy" style="max-width: none;">
+                New answers appear here automatically.
+              </p>
+            </div>
+            <div class="response-count">${liveResponses.length}</div>
+          </div>
+
+          <div class="response-board">
+            ${responseCards}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const qrContainer = document.getElementById('responseQrCode');
+  const copyResponseButton = document.getElementById('copyResponseUrlBtn');
+  const refreshResponsesBtn = document.getElementById('refreshResponsesBtn');
+  const clearResponsesBtn = document.getElementById('clearResponsesBtn');
+
+  if (qrContainer) {
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+      text: RESPONSE_FORM_URL,
+      width: 180,
+      height: 180
+    });
+  }
+
+  if (copyResponseButton) {
+    copyResponseButton.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(RESPONSE_FORM_URL);
+        copyResponseButton.textContent = 'Copied!';
+        setTimeout(() => {
+          copyResponseButton.textContent = 'Copy response link';
+        }, 1500);
+      } catch (err) {
+        copyResponseButton.textContent = 'Copy failed';
+        setTimeout(() => {
+          copyResponseButton.textContent = 'Copy response link';
+        }, 1500);
+      }
+    };
+  }
+
+  if (refreshResponsesBtn) {
+    refreshResponsesBtn.addEventListener('click', loadResponsesFromAppsScript);
+  }
+
+  if (clearResponsesBtn) {
+    clearResponsesBtn.addEventListener('click', clearResponses);
+  }
+}
+
+    function renderPlaceholderApplet(active) {
+      const countText = students.length === 1 ? '1 student' : `${students.length} students`;
+      appletBox.innerHTML = `
+        <div>
+          <div class="applet-title">Applet area</div>
+          <p class="applet-copy">
+            This space is ready for the interactive HTML version of the ${active.label} tool. The shared roster currently has ${countText}.
+          </p>
+        </div>
+      `;
+    }
+
+    function renderApplet() {
+      const active = tabs.find((tab) => tab.id === activeTab);
+      if (activeTab === 'table-sort') {
+        renderTableSortApplet();
+      } else if (activeTab === 'cold-call') {
+        renderColdCallApplet();
+      } else if (activeTab === 'free-response') {
+        renderFreeResponseApplet();
+      } else {
+        renderPlaceholderApplet(active);
+      }
+    }
+
+    function renderContent() {
+      const active = tabs.find((tab) => tab.id === activeTab);
+      toolIcon.textContent = active.icon;
+      toolTitle.textContent = active.label;
+      toolBlurb.textContent = active.blurb;
+      currentFocus.textContent = `${active.label} is selected and ready.`;
+      renderApplet();
+    }
+
+    renderTabs();
+    renderContent();
+    recomputeSharedRoster();
+    renderSignupPanel();
+    loadRosterFromAppsScript();
+    loadResponsesFromAppsScript();
+
+    setInterval(loadRosterFromAppsScript, 10000);
+    setInterval(loadResponsesFromAppsScript, 5000);
+  </script>
+</body>
+</html>
