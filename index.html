@@ -770,13 +770,13 @@
         id: 'free-response',
         label: 'Live Responses',
         icon: '💬',
-        blurb: 'Collect live student responses from phones onto a shared board.'
+        blurb: 'Collect live student responses from devices onto a shared board.'
       },
       {
         id: 'exit-ticket',
         label: 'Exit Tickets',
         icon: '📝',
-        blurb: 'Collect customizable exit tickets from student devices.'
+        blurb: 'Collect customizable exit tickets from devices.'
       }
     ];
 
@@ -797,7 +797,6 @@
 
     let freeResponseQuestion = '';
     let freeResponsePostedQuestion = '';
-    let freeResponseIsEditing = false;
 
     let exitTicketTitle = '';
     let exitTicketPrompt1 = '';
@@ -820,7 +819,7 @@
     const refreshRosterBtn = document.getElementById('refreshRosterBtn');
     const clearRosterBtn = document.getElementById('clearRosterBtn');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsLEVtx66o6AfSn2oWA_21hqppDX0PQueKXMkk5UKMAqldOAFntYbmIFPnEOqwl_PpMg/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzX8b3FZ8ZiLh6VHMGBrYgFyzo-gYWKkdRHZ09DNzM5qqSeUY3tsTfvmz4QcYLZycstjA/exec';
 
     function buildUrl(base, params) {
       const url = new URL(base, window.location.href);
@@ -894,14 +893,16 @@
       });
     }
 
-    function renderStudents() {
-      renderStudentPills(studentList, students);
-      studentCount.textContent = students.length;
+   function renderStudents() {
+  renderStudentPills(studentList, students);
+  studentCount.textContent = students.length;
 
-      if (!(activeTab === 'cold-call' && coldCallSpinning)) {
-        renderApplet();
-      }
-    }
+  if (activeTab === 'table-sort') {
+    renderTableSortApplet();
+  } else if (activeTab === 'cold-call' && !coldCallSpinning) {
+    renderColdCallApplet();
+  }
+}
 
     function loadRosterFromAppsScript() {
       const callbackName = 'handleRoster_' + Date.now();
@@ -950,7 +951,7 @@ function loadResponsesFromAppsScript() {
   window[callbackName] = function (data) {
     if (data && data.ok && Array.isArray(data.responses)) {
       liveResponses = data.responses;
-      if (activeTab === 'free-response' && !freeResponseIsEditing) {
+      if (activeTab === 'free-response') {
         renderFreeResponseApplet();
       }
     }
@@ -1395,24 +1396,31 @@ function loadResponsesFromAppsScript() {
               </div>
 
               <p class="small-note" style="margin-top:12px;">
-                Editing the question does not change the student QR code until you press <strong>Post</strong>.
+                The QR code becomes live once you press <strong>Post</strong>.
               </p>
 
-              <div id="responseQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
+            <div id="responseQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
 
-              <button
-                id="copyResponseUrlBtn"
-                class="primary-button secondary-button"
-                type="button"
-                style="width:100%; margin-top:0;"
-              >
-                Copy response link
-              </button>
+<div style="display:flex; justify-content:center;">
+  <div style="display:flex; gap:12px; width:440px;">
+    <button
+      id="copyResponseUrlBtn"
+      class="primary-button secondary-button"
+      type="button"
+      style="flex:1; margin-top:0;"
+    >
+      Copy response link
+    </button>
 
-              <div class="controls-row" style="margin-top: 16px; margin-bottom: 0;">
-                <button id="refreshResponsesBtn" class="primary-button secondary-button" type="button">Refresh responses</button>
-                <button id="clearResponsesBtn" class="primary-button danger-button" type="button">Clear responses</button>
-              </div>
+    <button
+      id="clearResponsesBtn"
+      class="primary-button danger-button"
+      type="button"
+      style="flex:1; margin-top:0;"
+    >
+      Clear responses
+    </button>
+  </div>
             </div>
 
             <div class="response-board-wrap">
@@ -1436,23 +1444,11 @@ function loadResponsesFromAppsScript() {
 
       const qrContainer = document.getElementById('responseQrCode');
       const copyResponseButton = document.getElementById('copyResponseUrlBtn');
-      const refreshResponsesBtn = document.getElementById('refreshResponsesBtn');
       const clearResponsesBtn = document.getElementById('clearResponsesBtn');
       const questionInput = document.getElementById('freeResponseQuestionInput');
       const postButton = document.getElementById('postFreeResponseBtn');
 
-	if (questionInput) {
-  questionInput.addEventListener('focus', () => {
-    freeResponseIsEditing = true;
-  });
-
-  questionInput.addEventListener('blur', () => {
-    freeResponseIsEditing = false;
-    if (activeTab === 'free-response') {
-      renderFreeResponseApplet();
-    }
-  });
-
+if (questionInput) {
   questionInput.addEventListener('input', (event) => {
     freeResponseQuestion = event.target.value;
   });
@@ -1467,13 +1463,14 @@ function loadResponsesFromAppsScript() {
         });
       }
 
-
-      if (postButton) {
-        postButton.addEventListener('click', () => {
-          freeResponsePostedQuestion = freeResponseQuestion;
-          renderFreeResponseApplet();
-        });
-      }
+if (postButton) {
+  postButton.addEventListener('click', () => {
+    freeResponsePostedQuestion = freeResponseQuestion;
+    liveResponses = [];
+    renderFreeResponseApplet();
+    loadResponsesFromAppsScript();
+  });
+}
 
       if (copyResponseButton) {
         copyResponseButton.onclick = async () => {
@@ -1492,9 +1489,6 @@ function loadResponsesFromAppsScript() {
         };
       }
 
-      if (refreshResponsesBtn) {
-        refreshResponsesBtn.addEventListener('click', loadResponsesFromAppsScript);
-      }
 
       if (clearResponsesBtn) {
         clearResponsesBtn.addEventListener('click', clearResponses);
@@ -1576,30 +1570,27 @@ appletBox.innerHTML = `
       <button id="postExitTicketBtn" class="primary-button" type="button">Post</button>
     </div>
 
-    <p class="small-note" style="margin-top:12px;">
-      Editing these fields does not change the student QR code until you press <strong>Post</strong>.
-    </p>
+<p class="small-note" style="margin-top:12px;">
+  The QR code becomes live once you press <strong>Post</strong>.
+</p>
 
-    <div id="exitTicketQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
+<div id="exitTicketQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
 
-    <button
-      id="copyExitTicketUrlBtn"
-      class="primary-button secondary-button"
-      type="button"
-      style="width:100%; margin-top:0;"
-    >
-      Copy exit ticket link
-    </button>
+<div style="display:flex; justify-content:center;">
+  <button
+    id="copyExitTicketUrlBtn"
+    class="primary-button secondary-button"
+    type="button"
+    style="width:220px; margin-top:0;"
+  >
+    Copy exit ticket link
+  </button>
+</div>
 
-    <div class="controls-row" style="margin-top: 16px; margin-bottom: 0;">
-      <button id="refreshExitTicketsBtn" class="primary-button secondary-button" type="button">Refresh exit tickets</button>
-      <button id="clearExitTicketsBtn" class="primary-button danger-button" type="button">Clear exit tickets</button>
-    </div>
-  </div>
+</div>
 `;
       const qrContainer = document.getElementById('exitTicketQrCode');
       const copyButton = document.getElementById('copyExitTicketUrlBtn');
-      const refreshBtn = document.getElementById('refreshExitTicketsBtn');
       const clearBtn = document.getElementById('clearExitTicketsBtn');
       const postButton = document.getElementById('postExitTicketBtn');
 
@@ -1641,15 +1632,17 @@ appletBox.innerHTML = `
         });
       }
 
-      if (postButton) {
-        postButton.addEventListener('click', () => {
-          exitTicketPostedTitle = exitTicketTitle;
-          exitTicketPostedPrompt1 = exitTicketPrompt1;
-          exitTicketPostedPrompt2 = exitTicketPrompt2;
-          exitTicketPostedPrompt3 = exitTicketPrompt3;
-          renderExitTicketApplet();
-        });
-      }
+if (postButton) {
+  postButton.addEventListener('click', () => {
+    exitTicketPostedTitle = exitTicketTitle;
+    exitTicketPostedPrompt1 = exitTicketPrompt1;
+    exitTicketPostedPrompt2 = exitTicketPrompt2;
+    exitTicketPostedPrompt3 = exitTicketPrompt3;
+    liveExitTickets = [];
+    renderExitTicketApplet();
+    loadExitTicketsFromAppsScript();
+  });
+}
 
       if (copyButton) {
         copyButton.onclick = async () => {
@@ -1668,9 +1661,6 @@ appletBox.innerHTML = `
         };
       }
 
-      if (refreshBtn) {
-        refreshBtn.addEventListener('click', loadExitTicketsFromAppsScript);
-      }
 
       if (clearBtn) {
         clearBtn.addEventListener('click', clearExitTickets);
@@ -1692,37 +1682,35 @@ appletBox.innerHTML = `
       }
     }
 
-    function renderContent() {
-      const active = tabs.find((tab) => tab.id === activeTab);
-      toolIcon.textContent = active.icon;
-      toolTitle.textContent = active.label;
-      toolBlurb.textContent = active.blurb;
-      renderApplet();
-    }
+function renderContent() {
+  const active = tabs.find((tab) => tab.id === activeTab);
+  toolIcon.textContent = active.icon;
+  toolTitle.textContent = active.label;
+  toolBlurb.textContent = active.blurb;
+  renderApplet();
+}
 
     renderTabs();
     renderContent();
     recomputeSharedRoster();
     renderSignupPanel();
     loadRosterFromAppsScript();
-    loadResponsesFromAppsScript();
-    loadExitTicketsFromAppsScript();
+ 
+setInterval(loadRosterFromAppsScript, 10000);
 
-    setInterval(loadRosterFromAppsScript, 10000);
 setInterval(() => {
-  if (freeResponsePostedQuestion.trim() !== '') {
+  if (freeResponsePostedQuestion.trim()) {
     loadResponsesFromAppsScript();
   }
 }, 5000);
 
 setInterval(() => {
-  const hasPostedExitTicket =
-    exitTicketPostedTitle.trim() !== '' ||
-    exitTicketPostedPrompt1.trim() !== '' ||
-    exitTicketPostedPrompt2.trim() !== '' ||
-    exitTicketPostedPrompt3.trim() !== '';
-
-  if (hasPostedExitTicket) {
+  if (
+    exitTicketPostedTitle.trim() ||
+    exitTicketPostedPrompt1.trim() ||
+    exitTicketPostedPrompt2.trim() ||
+    exitTicketPostedPrompt3.trim()
+  ) {
     loadExitTicketsFromAppsScript();
   }
 }, 5000);
