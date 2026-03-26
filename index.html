@@ -139,10 +139,21 @@
       outline: none;
     }
 
+  .exit-ticket-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
     textarea:focus,
-    input:focus {
+    input:focus,
+    select:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+      outline: none;
     }
 
     .student-list {
@@ -192,12 +203,6 @@
       font-size: 1.4rem;
     }
 
-    .board-desc {
-      margin: 8px 0 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
     .tabs {
       display: flex;
       flex-wrap: wrap;
@@ -230,13 +235,11 @@
     }
 
     .content {
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 22px;
+      display: block;
       padding: 0 24px 24px;
     }
 
-    .panel, .side-panel {
+    .panel {
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
       background: var(--panel-soft);
@@ -297,16 +300,6 @@
       max-width: 460px;
     }
 
-    .side-panel h3 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-
-    .side-panel p {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
     .info-card {
       margin-top: 14px;
       background: white;
@@ -335,6 +328,7 @@
 
     .control-group {
       min-width: 180px;
+      flex: 1 1 220px;
     }
 
     .control-label {
@@ -346,13 +340,20 @@
     }
 
     .control-select,
-    .control-input {
+    .control-input,
+    .control-textarea {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 14px;
       font: inherit;
       background: white;
+      color: var(--text);
+    }
+
+    .control-textarea {
+      min-height: 90px;
+      resize: vertical;
     }
 
     .primary-button {
@@ -422,6 +423,7 @@
       flex-direction: column;
       align-items: center;
       gap: 18px;
+      width: 100%;
     }
 
     .roulette-wheel {
@@ -485,7 +487,7 @@
     .roulette-status {
       color: var(--muted);
       line-height: 1.6;
-      max-width: 520px;
+      max-width: 620px;
     }
 
     .winner-card {
@@ -506,39 +508,29 @@
       line-height: 1.5;
     }
 
-    .free-response-ui {
+    .history-wrap {
+      width: 100%;
+      max-width: 720px;
+      text-align: left;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #f8fbff;
+      padding: 16px;
+    }
+
+    .history-title {
+      margin: 0 0 8px;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .free-response-ui,
+    .exit-ticket-ui {
       width: 100%;
     }
 
-    .free-response-layout {
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .response-qr-card {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      background: #f8fbff;
-    }
-
-    .response-board-wrap {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: #f8fbff;
-      padding: 18px;
-      min-height: 320px;
-    }
-
-    .response-board {
-      display: grid;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .response-card {
+    .response-card,
+    .ticket-card {
       background: white;
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -546,7 +538,8 @@
       box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
     }
 
-    .response-meta {
+    .response-meta,
+    .ticket-meta {
       font-size: 0.82rem;
       color: var(--muted);
       margin-bottom: 8px;
@@ -558,6 +551,33 @@
 
     .response-text {
       font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .ticket-answer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .ticket-answer:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .ticket-prompt {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .ticket-text {
+      font-size: 0.98rem;
       line-height: 1.6;
       color: var(--text);
       white-space: pre-wrap;
@@ -580,8 +600,8 @@
 
     @media (max-width: 900px) {
       .shared-grid,
-      .content,
-      .free-response-layout {
+      .free-response-layout,
+      .exit-ticket-layout {
         grid-template-columns: 1fr;
       }
 
@@ -636,12 +656,12 @@
             <div class="eyebrow">Classroom Dashboard</div>
             <h1>Classroom Tools</h1>
             <p class="subtitle">
-              A browser-based home for your teaching utilities.
+              A browser-based home for teaching utilities.
             </p>
           </div>
 
           <div class="stats">
-            <div class="stat">Interacive</div>
+            <div class="stat">Interactive</div>
             <div class="stat">Online use</div>
             <div class="stat">Shared roster</div>
           </div>
@@ -658,41 +678,37 @@
 
             <textarea id="studentInput" placeholder="Ada Lovelace, Emmy Noether, Srinivasa Ramanujan, Katherine Johnson"></textarea>
 
-            <div class="controls-row" style="margin-top: 14px;">
-              <button id="refreshRosterBtn" class="primary-button secondary-button" type="button">Refresh phone sign-ups</button>
-              <button id="clearRosterBtn" class="primary-button danger-button" type="button">Clear today's phone roster</button>
+            <div class="info-card" style="margin-top: 18px;">
+              <button
+                id="toggleSignupPanelBtn"
+                type="button"
+                class="primary-button secondary-button"
+                style="width:100%; display:flex; justify-content:space-between; align-items:center;"
+              >
+                <span id="signupPanelLabel">Enable Online Signup</span>
+                <span id="signupPanelChevron">+</span>
+              </button>
+
+              <div id="signupPanelBody" style="display:none; margin-top:12px;">
+                <p class="section-copy" style="margin-top: 8px; margin-bottom: 12px;">
+                  Students can scan this QR code to open the sign-up form on their phones.
+                </p>
+                <div id="qrCode" style="display:flex; justify-content:center; margin-bottom:12px;"></div>
+                <button
+                  id="copySignupUrlBtn"
+                  class="primary-button secondary-button"
+                  type="button"
+                  style="width:100%; margin-top:8px;"
+                >
+                  Copy sign-up link
+                </button>
+
+                <div class="controls-row" style="margin-top: 12px; margin-bottom: 0;">
+                  <button id="refreshRosterBtn" class="primary-button secondary-button" type="button">Refresh phone sign-ups</button>
+                  <button id="clearRosterBtn" class="primary-button danger-button" type="button">Clear today's phone roster</button>
+                </div>
+              </div>
             </div>
-
- <div class="info-card" style="margin-top: 18px;">
-  <button
-    id="toggleSignupPanelBtn"
-    type="button"
-    class="primary-button secondary-button"
-    style="width:100%; display:flex; justify-content:space-between; align-items:center;"
-  >
-    <span id="signupPanelLabel">Enable Online Signup</span>
-    <span id="signupPanelChevron">+</span>
-  </button>
-
-  <div
-    id="signupPanelBody"
-    style="display:none; margin-top:12px;"
-  >
-    <p class="section-copy" style="margin-top: 8px; margin-bottom: 12px;">
-      Students can scan this QR code to open the sign-up form on their phones.
-    </p>
-    <div id="qrCode" style="display:flex; justify-content:center; margin-bottom:12px;"></div>
-    <button
-      id="copySignupUrlBtn"
-      class="primary-button secondary-button"
-      type="button"
-      style="width:100%; margin-top:8px;"
-    >
-      Copy sign-up link
-    </button>
-  </div>
-</div>
-
 
             <div class="student-list" id="studentList"></div>
           </div>
@@ -710,7 +726,7 @@
       <section class="board">
         <div class="board-header">
           <h2 class="board-title">Tool Board</h2>
-          <p class="board-desc">Switch between applets using the tabs below.</p>
+        
         </div>
 
         <div class="tabs" id="tabs"></div>
@@ -729,23 +745,6 @@
 
             <div class="applet-box" id="appletBox"></div>
           </div>
-
-          <aside class="side-panel">
-            <h3>Shared data</h3>
-            <p>
-              Every applet can access the same combined roster, so you only need to enter names once.
-            </p>
-
-            <div class="info-card">
-              <strong>Current students</strong>
-              <div class="student-list" id="sideStudentList"></div>
-            </div>
-
-            <div class="info-card">
-              <strong>Current focus</strong>
-              <span id="currentFocus">Table Sort is selected and ready to be built first.</span>
-            </div>
-          </aside>
         </div>
       </section>
     </div>
@@ -763,15 +762,21 @@
       },
       {
         id: 'cold-call',
-        label: 'Cold Call',
+        label: 'Call Students',
         icon: '👥',
-        blurb: 'Run fair, quick student selection for participation.'
+        blurb: 'Choose students randomly without repeats.'
       },
       {
         id: 'free-response',
-        label: 'Free Responses',
+        label: 'Live Responses',
         icon: '💬',
         blurb: 'Collect live student responses from phones onto a shared board.'
+      },
+      {
+        id: 'exit-ticket',
+        label: 'Exit Tickets',
+        icon: '📝',
+        blurb: 'Collect customizable exit tickets from student devices.'
       }
     ];
 
@@ -784,24 +789,65 @@
     let coldCallWinner = '';
     let rouletteRotation = 0;
     let coldCallSpinning = false;
+    let pickedStudents = [];
+    let pendingPickedStudent = '';
     let liveResponses = [];
+    let liveExitTickets = [];
     let signupPanelOpen = false;
-    
+
+    let freeResponseQuestion = '';
+    let freeResponsePostedQuestion = '';
+    let freeResponseIsEditing = false;
+
+    let exitTicketTitle = '';
+    let exitTicketPrompt1 = '';
+    let exitTicketPrompt2 = '';
+    let exitTicketPrompt3 = '';
+
+    let exitTicketPostedTitle = '';
+    let exitTicketPostedPrompt1 = '';
+    let exitTicketPostedPrompt2 = '';
+    let exitTicketPostedPrompt3 = '';
+
     const tabsContainer = document.getElementById('tabs');
     const toolIcon = document.getElementById('toolIcon');
     const toolTitle = document.getElementById('toolTitle');
     const toolBlurb = document.getElementById('toolBlurb');
-    const currentFocus = document.getElementById('currentFocus');
     const studentInput = document.getElementById('studentInput');
     const studentList = document.getElementById('studentList');
-    const sideStudentList = document.getElementById('sideStudentList');
     const studentCount = document.getElementById('studentCount');
     const appletBox = document.getElementById('appletBox');
     const refreshRosterBtn = document.getElementById('refreshRosterBtn');
     const clearRosterBtn = document.getElementById('clearRosterBtn');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxs7_jSobEWCTPxcCTuBIRA4E7E-RrKZ3Ih_4VGZdFs-6a0T_2QRHR9dJ6r8-cVNdfuTA/exec';
-    const RESPONSE_FORM_URL = `${APPS_SCRIPT_URL}?mode=responseForm`;
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsLEVtx66o6AfSn2oWA_21hqppDX0PQueKXMkk5UKMAqldOAFntYbmIFPnEOqwl_PpMg/exec';
+
+    function buildUrl(base, params) {
+      const url = new URL(base, window.location.href);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && String(value).trim() !== '') {
+          url.searchParams.set(key, value);
+        }
+      });
+      return url.toString();
+    }
+
+    function getResponseFormUrl() {
+      return buildUrl(APPS_SCRIPT_URL, {
+        mode: 'responseForm',
+        prompt: freeResponsePostedQuestion
+      });
+    }
+
+    function getExitTicketFormUrl() {
+      return buildUrl(APPS_SCRIPT_URL, {
+        mode: 'exitTicketForm',
+        title: exitTicketPostedTitle,
+        prompt1: exitTicketPostedPrompt1,
+        prompt2: exitTicketPostedPrompt2,
+        prompt3: exitTicketPostedPrompt3
+      });
+    }
 
     function parseStudents(input) {
       return input
@@ -821,6 +867,10 @@
 
     function recomputeSharedRoster() {
       students = [...manualStudents, ...remoteStudents];
+      pickedStudents = pickedStudents.filter(name => students.includes(name));
+      if (pendingPickedStudent && !students.includes(pendingPickedStudent)) {
+        pendingPickedStudent = '';
+      }
       renderStudents();
     }
 
@@ -846,9 +896,11 @@
 
     function renderStudents() {
       renderStudentPills(studentList, students);
-      renderStudentPills(sideStudentList, students);
       studentCount.textContent = students.length;
-      renderApplet();
+
+      if (!(activeTab === 'cold-call' && coldCallSpinning)) {
+        renderApplet();
+      }
     }
 
     function loadRosterFromAppsScript() {
@@ -860,7 +912,6 @@
           remoteStudents = data.students;
           recomputeSharedRoster();
         }
-
         delete window[callbackName];
         script.remove();
       };
@@ -884,7 +935,6 @@
         } else {
           alert('Could not clear the phone roster.');
         }
-
         delete window[callbackName];
         script.remove();
       };
@@ -893,28 +943,27 @@
       document.body.appendChild(script);
     }
 
-    function loadResponsesFromAppsScript() {
-      const callbackName = 'handleResponses_' + Date.now();
-      const script = document.createElement('script');
+function loadResponsesFromAppsScript() {
+  const callbackName = 'handleResponses_' + Date.now();
+  const script = document.createElement('script');
 
-      window[callbackName] = function (data) {
-        if (data && data.ok && Array.isArray(data.responses)) {
-          liveResponses = data.responses;
-          if (activeTab === 'free-response') {
-            renderFreeResponseApplet();
-          }
-        }
-
-        delete window[callbackName];
-        script.remove();
-      };
-
-      script.src = `${APPS_SCRIPT_URL}?mode=responses&prefix=${callbackName}`;
-      document.body.appendChild(script);
+  window[callbackName] = function (data) {
+    if (data && data.ok && Array.isArray(data.responses)) {
+      liveResponses = data.responses;
+      if (activeTab === 'free-response' && !freeResponseIsEditing) {
+        renderFreeResponseApplet();
+      }
     }
+    delete window[callbackName];
+    script.remove();
+  };
+
+  script.src = `${APPS_SCRIPT_URL}?mode=responses&prefix=${callbackName}`;
+  document.body.appendChild(script);
+}
 
     function clearResponses() {
-      const confirmed = window.confirm('Clear all live free responses?');
+      const confirmed = window.confirm('Clear all live responses?');
       if (!confirmed) return;
 
       const callbackName = 'handleClearResponses_' + Date.now();
@@ -930,12 +979,55 @@
         } else {
           alert('Could not clear responses.');
         }
-
         delete window[callbackName];
         script.remove();
       };
 
       script.src = `${APPS_SCRIPT_URL}?mode=clearResponses&prefix=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    function loadExitTicketsFromAppsScript() {
+      const callbackName = 'handleExitTickets_' + Date.now();
+      const script = document.createElement('script');
+
+      window[callbackName] = function (data) {
+        if (data && data.ok && Array.isArray(data.exitTickets)) {
+          liveExitTickets = data.exitTickets;
+          if (activeTab === 'exit-ticket') {
+            renderExitTicketApplet();
+          }
+        }
+        delete window[callbackName];
+        script.remove();
+      };
+
+      script.src = `${APPS_SCRIPT_URL}?mode=exitTickets&prefix=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    function clearExitTickets() {
+      const confirmed = window.confirm('Clear all exit tickets?');
+      if (!confirmed) return;
+
+      const callbackName = 'handleClearExitTickets_' + Date.now();
+      const script = document.createElement('script');
+
+      window[callbackName] = function (data) {
+        if (data && data.ok) {
+          liveExitTickets = [];
+          if (activeTab === 'exit-ticket') {
+            renderExitTicketApplet();
+          }
+          loadExitTicketsFromAppsScript();
+        } else {
+          alert('Could not clear exit tickets.');
+        }
+        delete window[callbackName];
+        script.remove();
+      };
+
+      script.src = `${APPS_SCRIPT_URL}?mode=clearExitTickets&prefix=${callbackName}`;
       document.body.appendChild(script);
     }
 
@@ -1052,60 +1144,60 @@
       ].join(' ');
     }
 
-	function renderSignupPanel() {
-  const toggleBtn = document.getElementById('toggleSignupPanelBtn');
-  const panelBody = document.getElementById('signupPanelBody');
-  const panelLabel = document.getElementById('signupPanelLabel');
-  const panelChevron = document.getElementById('signupPanelChevron');
+    function renderSignupPanel() {
+      const toggleBtn = document.getElementById('toggleSignupPanelBtn');
+      const panelBody = document.getElementById('signupPanelBody');
+      const panelLabel = document.getElementById('signupPanelLabel');
+      const panelChevron = document.getElementById('signupPanelChevron');
 
-  if (!toggleBtn || !panelBody || !panelLabel || !panelChevron) return;
+      if (!toggleBtn || !panelBody || !panelLabel || !panelChevron) return;
 
-  panelBody.style.display = signupPanelOpen ? 'block' : 'none';
-  panelLabel.textContent = signupPanelOpen ? 'Online Signup Enabled' : 'Enable Online Signup';
-  panelChevron.textContent = signupPanelOpen ? '−' : '+';
+      panelBody.style.display = signupPanelOpen ? 'block' : 'none';
+      panelLabel.textContent = signupPanelOpen ? 'Online Signup Enabled' : 'Enable Online Signup';
+      panelChevron.textContent = signupPanelOpen ? '−' : '+';
 
-  toggleBtn.onclick = () => {
-    signupPanelOpen = !signupPanelOpen;
-    renderSignupPanel();
-    if (signupPanelOpen) {
-      renderSignupQrCode();
+      toggleBtn.onclick = () => {
+        signupPanelOpen = !signupPanelOpen;
+        renderSignupPanel();
+        if (signupPanelOpen) {
+          renderSignupQrCode();
+        }
+      };
+
+      if (signupPanelOpen) {
+        renderSignupQrCode();
+      }
     }
-  };
 
-  if (signupPanelOpen) {
-    renderSignupQrCode();
-  }
-}
+    function renderSignupQrCode() {
+      const qrContainer = document.getElementById('qrCode');
+      const copyButton = document.getElementById('copySignupUrlBtn');
 
-function renderSignupQrCode() {
-  const qrContainer = document.getElementById('qrCode');
-  const copyButton = document.getElementById('copySignupUrlBtn');
+      if (!signupPanelOpen || !qrContainer || !copyButton) return;
 
-  if (!signupPanelOpen || !qrContainer || !copyButton) return;
+      qrContainer.innerHTML = '';
 
-  qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: APPS_SCRIPT_URL,
+        width: 180,
+        height: 180
+      });
 
-  new QRCode(qrContainer, {
-    text: APPS_SCRIPT_URL,
-    width: 180,
-    height: 180
-  });
-
-  copyButton.onclick = async () => {
-    try {
-      await navigator.clipboard.writeText(APPS_SCRIPT_URL);
-      copyButton.textContent = 'Copied!';
-      setTimeout(() => {
-        copyButton.textContent = 'Copy sign-up link';
-      }, 1500);
-    } catch (err) {
-      copyButton.textContent = 'Copy failed';
-      setTimeout(() => {
-        copyButton.textContent = 'Copy sign-up link';
-      }, 1500);
+      copyButton.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(APPS_SCRIPT_URL);
+          copyButton.textContent = 'Copied!';
+          setTimeout(() => {
+            copyButton.textContent = 'Copy sign-up link';
+          }, 1500);
+        } catch (err) {
+          copyButton.textContent = 'Copy failed';
+          setTimeout(() => {
+            copyButton.textContent = 'Copy sign-up link';
+          }, 1500);
+        }
+      };
     }
-  };
-}
 
     function buildWheelSvg(names) {
       const colors = ['#dbeafe', '#bfdbfe', '#c7d2fe', '#ddd6fe', '#e9d5ff', '#d1fae5', '#fde68a', '#fecdd3'];
@@ -1136,14 +1228,27 @@ function renderSignupQrCode() {
       `;
     }
 
-    function renderColdCallApplet() {
-      const countText = students.length === 1 ? '1 student is' : `${students.length} students are`;
-      const statusText = students.length
-        ? `${countText} on the shared roster. Press spin to choose a student at random.`
-        : 'Add students to the shared roster first, then spin the wheel.';
+    function resetPickerHistory() {
+      pickedStudents = [];
+      pendingPickedStudent = '';
+      coldCallWinner = '';
+      renderColdCallApplet();
+    }
 
-      const wheelMarkup = students.length
-        ? buildWheelSvg(students)
+    function renderColdCallApplet() {
+      const availableStudents = students.filter(name => !pickedStudents.includes(name));
+      const displayStudents = availableStudents.length ? availableStudents : (students.length ? ['Refresh picker'] : []);
+      const pickedText = pickedStudents.length === 1 ? '1 student has already been chosen.' : `${pickedStudents.length} students have already been chosen.`;
+      const remainingText = availableStudents.length === 1 ? '1 student remains.' : `${availableStudents.length} students remain.`;
+
+      const statusText = !students.length
+        ? 'Add students to the shared roster first, then spin the wheel.'
+        : !availableStudents.length
+        ? 'Everyone has already been picked once. Press refresh picker to clear the history and start over.'
+        : `${remainingText} ${pickedText}`;
+
+      const wheelMarkup = displayStudents.length
+        ? buildWheelSvg(displayStudents)
         : '<div class="applet-copy"></div>';
 
       appletBox.innerHTML = `
@@ -1152,36 +1257,69 @@ function renderSignupQrCode() {
             <div class="roulette-pointer"></div>
             <div class="roulette-wheel" id="rouletteWheel" style="transform: rotate(${rouletteRotation}deg);">
               ${wheelMarkup}
-              <div class="roulette-center" id="rouletteCenter">${coldCallSpinning ? 'Spinning...' : '&#x1F644'}</div>
+              <div class="roulette-center" id="rouletteCenter">${coldCallSpinning ? 'Spinning...' : '&#128517'}</div>
             </div>
-            <button id="spinRouletteBtn" class="primary-button" ${students.length ? '' : 'disabled'}>
-              ${coldCallSpinning ? 'Spinning...' : 'Spin roulette'}
-            </button>
+
+            <div class="controls-row" style="justify-content:center; margin-bottom:0;">
+              <button id="spinRouletteBtn" class="primary-button" ${availableStudents.length ? '' : 'disabled'}>
+                ${coldCallSpinning ? 'Spinning...' : 'Pick a student'}
+              </button>
+              <button id="resetPickerBtn" class="primary-button secondary-button" ${students.length ? '' : 'disabled'}>
+                Refresh picker
+              </button>
+            </div>
+
             <div class="roulette-status">${statusText}</div>
             <div class="winner-card" id="winnerCard">${coldCallWinner ? `Selected student: ${escapeHtml(coldCallWinner)}` : 'No student selected yet.'}</div>
+
+            <div class="history-wrap">
+              <div class="history-title">Already picked</div>
+              <div class="student-list">
+                ${pickedStudents.length
+                  ? pickedStudents.map(name => `<div class="student-pill">${escapeHtml(name)}</div>`).join('')
+                  : '<div class="empty-note">No students have been picked yet.</div>'}
+              </div>
+            </div>
           </div>
         </div>
       `;
 
       const spinButton = document.getElementById('spinRouletteBtn');
+      const resetButton = document.getElementById('resetPickerBtn');
+
       if (spinButton) {
-        spinButton.disabled = !students.length || coldCallSpinning;
+        spinButton.disabled = !availableStudents.length || coldCallSpinning;
         spinButton.addEventListener('click', spinRoulette);
+      }
+
+      if (resetButton) {
+        resetButton.addEventListener('click', resetPickerHistory);
       }
     }
 
     function spinRoulette() {
-      if (!students.length || coldCallSpinning) return;
+      if (pendingPickedStudent && !pickedStudents.includes(pendingPickedStudent)) {
+        pickedStudents.push(pendingPickedStudent);
+        pendingPickedStudent = '';
+      }
+
+      const availableStudents = students.filter(name => !pickedStudents.includes(name));
+      if (!availableStudents.length || coldCallSpinning) {
+        renderColdCallApplet();
+        return;
+      }
 
       coldCallSpinning = true;
+      renderColdCallApplet();
+
       const spinButton = document.getElementById('spinRouletteBtn');
       const wheel = document.getElementById('rouletteWheel');
       const center = document.getElementById('rouletteCenter');
       const winnerCard = document.getElementById('winnerCard');
 
-      const randomIndex = Math.floor(Math.random() * students.length);
-      const winner = students[randomIndex];
-      const sliceAngle = 360 / students.length;
+      const randomIndex = Math.floor(Math.random() * availableStudents.length);
+      const winner = availableStudents[randomIndex];
+      const sliceAngle = 360 / availableStudents.length;
       const centerAngle = randomIndex * sliceAngle + sliceAngle / 2;
       const targetRotation = (360 - centerAngle) % 360;
       const currentNormalized = ((rouletteRotation % 360) + 360) % 360;
@@ -1212,6 +1350,7 @@ function renderSignupQrCode() {
       setTimeout(() => {
         rouletteRotation = nextRotation;
         coldCallWinner = winner;
+        pendingPickedStudent = winner;
         coldCallSpinning = false;
         renderColdCallApplet();
       }, 4000);
@@ -1224,113 +1363,318 @@ function renderSignupQrCode() {
       return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     }
 
-   function renderFreeResponseApplet() {
-  const responseCards = liveResponses.length
-    ? liveResponses
-        .slice()
-        .reverse()
-        .map((item, index) => `
-          <div class="response-card">
-            <div class="response-meta">
-              <span>${item.name ? escapeHtml(item.name) : `Response ${liveResponses.length - index}`}</span>
-              <span>${formatResponseTime(item.timestamp)}</span>
-            </div>
-            <div class="response-text">${escapeHtml(item.text || '')}</div>
-          </div>
-        `)
-        .join('')
-    : `<div class="empty-note">Scan the QR code to submit your answer.</div>`;
+    function renderFreeResponseApplet() {
+      const responseFormUrl = getResponseFormUrl();
 
-  appletBox.innerHTML = `
-    <div class="free-response-ui">
-      <div class="free-response-layout">
-        <div class="response-qr-card">
-          <div class="applet-title">Student submission QR code</div>
-          <div id="responseQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
-          <button
-            id="copyResponseUrlBtn"
-            class="primary-button secondary-button"
-            type="button"
-            style="width:100%; margin-top:0;"
-          >
-            Copy response link
-          </button>
+      const responseCards = liveResponses.length
+        ? liveResponses
+            .slice()
+            .reverse()
+            .map((item, index) => `
+              <div class="response-card">
+                <div class="response-meta">
+                  <span>${item.name ? escapeHtml(item.name) : `Response ${liveResponses.length - index}`}</span>
+                  <span>${formatResponseTime(item.timestamp)}</span>
+                </div>
+                <div class="response-text">${escapeHtml(item.text || '')}</div>
+              </div>
+            `)
+            .join('')
+        : `<div class="empty-note">Share the link or QR code to collect responses.</div>`;
 
-          <div class="controls-row" style="margin-top: 16px; margin-bottom: 0;">
-            <button id="refreshResponsesBtn" class="primary-button secondary-button" type="button">Refresh responses</button>
-            <button id="clearResponsesBtn" class="primary-button danger-button" type="button">Clear responses</button>
-          </div>
-        </div>
-
-        <div class="response-board-wrap">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
-            <div>
-              <div class="applet-title" style="margin-bottom: 4px;">Live response board</div>
-              <p class="applet-copy" style="max-width: none;">
-                New answers appear here automatically.
-              </p>
-            </div>
-            <div class="response-count">${liveResponses.length}</div>
-          </div>
-
-          <div class="response-board">
-            ${responseCards}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const qrContainer = document.getElementById('responseQrCode');
-  const copyResponseButton = document.getElementById('copyResponseUrlBtn');
-  const refreshResponsesBtn = document.getElementById('refreshResponsesBtn');
-  const clearResponsesBtn = document.getElementById('clearResponsesBtn');
-
-  if (qrContainer) {
-    qrContainer.innerHTML = '';
-    new QRCode(qrContainer, {
-      text: RESPONSE_FORM_URL,
-      width: 180,
-      height: 180
-    });
-  }
-
-  if (copyResponseButton) {
-    copyResponseButton.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(RESPONSE_FORM_URL);
-        copyResponseButton.textContent = 'Copied!';
-        setTimeout(() => {
-          copyResponseButton.textContent = 'Copy response link';
-        }, 1500);
-      } catch (err) {
-        copyResponseButton.textContent = 'Copy failed';
-        setTimeout(() => {
-          copyResponseButton.textContent = 'Copy response link';
-        }, 1500);
-      }
-    };
-  }
-
-  if (refreshResponsesBtn) {
-    refreshResponsesBtn.addEventListener('click', loadResponsesFromAppsScript);
-  }
-
-  if (clearResponsesBtn) {
-    clearResponsesBtn.addEventListener('click', clearResponses);
-  }
-}
-
-    function renderPlaceholderApplet(active) {
-      const countText = students.length === 1 ? '1 student' : `${students.length} students`;
       appletBox.innerHTML = `
-        <div>
-          <div class="applet-title">Applet area</div>
-          <p class="applet-copy">
-            This space is ready for the interactive HTML version of the ${active.label} tool. The shared roster currently has ${countText}.
-          </p>
+        <div class="free-response-ui">
+          <div class="free-response-layout">
+            <div class="response-qr-card">
+              <div class="applet-title">Prompt and submission link</div>
+
+              <textarea id="freeResponseQuestionInput" class="control-textarea" placeholder="Type the question students should answer...">${escapeHtml(freeResponseQuestion)}</textarea>
+
+              <div class="controls-row" style="margin-top: 12px; margin-bottom: 0;">
+                <button id="postFreeResponseBtn" class="primary-button" type="button">Post</button>
+              </div>
+
+              <p class="small-note" style="margin-top:12px;">
+                Editing the question does not change the student QR code until you press <strong>Post</strong>.
+              </p>
+
+              <div id="responseQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
+
+              <button
+                id="copyResponseUrlBtn"
+                class="primary-button secondary-button"
+                type="button"
+                style="width:100%; margin-top:0;"
+              >
+                Copy response link
+              </button>
+
+              <div class="controls-row" style="margin-top: 16px; margin-bottom: 0;">
+                <button id="refreshResponsesBtn" class="primary-button secondary-button" type="button">Refresh responses</button>
+                <button id="clearResponsesBtn" class="primary-button danger-button" type="button">Clear responses</button>
+              </div>
+            </div>
+
+            <div class="response-board-wrap">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+                <div>
+                  <div class="applet-title" style="margin-bottom: 4px;">Live response board</div>
+                  <p class="applet-copy" style="max-width: none;">
+                    <strong>Posted question:</strong> ${escapeHtml(freeResponsePostedQuestion || 'Nothing posted yet.')}
+                  </p>
+                </div>
+                <div class="response-count">${liveResponses.length}</div>
+              </div>
+
+              <div class="response-board">
+                ${responseCards}
+              </div>
+            </div>
+          </div>
         </div>
       `;
+
+      const qrContainer = document.getElementById('responseQrCode');
+      const copyResponseButton = document.getElementById('copyResponseUrlBtn');
+      const refreshResponsesBtn = document.getElementById('refreshResponsesBtn');
+      const clearResponsesBtn = document.getElementById('clearResponsesBtn');
+      const questionInput = document.getElementById('freeResponseQuestionInput');
+      const postButton = document.getElementById('postFreeResponseBtn');
+
+	if (questionInput) {
+  questionInput.addEventListener('focus', () => {
+    freeResponseIsEditing = true;
+  });
+
+  questionInput.addEventListener('blur', () => {
+    freeResponseIsEditing = false;
+    if (activeTab === 'free-response') {
+      renderFreeResponseApplet();
+    }
+  });
+
+  questionInput.addEventListener('input', (event) => {
+    freeResponseQuestion = event.target.value;
+  });
+}
+
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+          text: responseFormUrl,
+          width: 180,
+          height: 180
+        });
+      }
+
+
+      if (postButton) {
+        postButton.addEventListener('click', () => {
+          freeResponsePostedQuestion = freeResponseQuestion;
+          renderFreeResponseApplet();
+        });
+      }
+
+      if (copyResponseButton) {
+        copyResponseButton.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(getResponseFormUrl());
+            copyResponseButton.textContent = 'Copied!';
+            setTimeout(() => {
+              copyResponseButton.textContent = 'Copy response link';
+            }, 1500);
+          } catch (err) {
+            copyResponseButton.textContent = 'Copy failed';
+            setTimeout(() => {
+              copyResponseButton.textContent = 'Copy response link';
+            }, 1500);
+          }
+        };
+      }
+
+      if (refreshResponsesBtn) {
+        refreshResponsesBtn.addEventListener('click', loadResponsesFromAppsScript);
+      }
+
+      if (clearResponsesBtn) {
+        clearResponsesBtn.addEventListener('click', clearResponses);
+      }
+    }
+
+    function extractTicketAnswer(item, candidates) {
+      for (const key of candidates) {
+        if (item[key] !== undefined && item[key] !== null && String(item[key]).trim() !== '') {
+          return String(item[key]);
+        }
+      }
+      return '';
+    }
+
+    function renderExitTicketApplet() {
+      const exitTicketFormUrl = getExitTicketFormUrl();
+
+      const ticketCards = liveExitTickets.length
+        ? liveExitTickets
+            .slice()
+            .reverse()
+            .map((item, index) => {
+              const answer1 = extractTicketAnswer(item, ['answer1', 'q1', 'response1']);
+              const answer2 = extractTicketAnswer(item, ['answer2', 'q2', 'response2']);
+              const answer3 = extractTicketAnswer(item, ['answer3', 'q3', 'response3']);
+
+              return `
+                <div class="ticket-card">
+                <div class="ticket-meta" style="justify-content:flex-end;">
+		  <span>${formatResponseTime(item.timestamp)}</span>
+		</div>
+
+                  <div class="ticket-answer">
+                    <div class="ticket-prompt">${escapeHtml(exitTicketPostedPrompt1)}</div>
+                    <div class="ticket-text">${escapeHtml(answer1 || '—')}</div>
+                  </div>
+
+                  <div class="ticket-answer">
+                    <div class="ticket-prompt">${escapeHtml(exitTicketPostedPrompt2)}</div>
+                    <div class="ticket-text">${escapeHtml(answer2 || '—')}</div>
+                  </div>
+
+                  <div class="ticket-answer">
+                    <div class="ticket-prompt">${escapeHtml(exitTicketPostedPrompt3)}</div>
+                    <div class="ticket-text">${escapeHtml(answer3 || '—')}</div>
+                  </div>
+                </div>
+              `;
+            })
+            .join('')
+        : `<div class="empty-note">No responses yet.</div>`;
+
+appletBox.innerHTML = `
+  <div class="exit-ticket-ui" style="width:100%;">
+    <div class="exit-ticket-topbar">
+      <div>
+        <div class="applet-title" style="margin-bottom:4px;">Exit Ticket</div>
+        <p class="small-note" style="margin:0;">
+          Configure the form students will see.
+        </p>
+      </div>
+      <div class="response-count">${liveExitTickets.length}</div>
+    </div>
+
+    <label class="control-label" for="exitTicketTitleInput">Title</label>
+    <input id="exitTicketTitleInput" class="control-input" value="${escapeHtml(exitTicketTitle)}" />
+
+    <label class="control-label" for="exitTicketPrompt1Input" style="margin-top:12px;">Prompt 1</label>
+    <input id="exitTicketPrompt1Input" class="control-input" value="${escapeHtml(exitTicketPrompt1)}" />
+
+    <label class="control-label" for="exitTicketPrompt2Input" style="margin-top:12px;">Prompt 2</label>
+    <input id="exitTicketPrompt2Input" class="control-input" value="${escapeHtml(exitTicketPrompt2)}" />
+
+    <label class="control-label" for="exitTicketPrompt3Input" style="margin-top:12px;">Prompt 3</label>
+    <input id="exitTicketPrompt3Input" class="control-input" value="${escapeHtml(exitTicketPrompt3)}" />
+
+    <div class="controls-row" style="margin-top: 12px; margin-bottom: 0;">
+      <button id="postExitTicketBtn" class="primary-button" type="button">Post</button>
+    </div>
+
+    <p class="small-note" style="margin-top:12px;">
+      Editing these fields does not change the student QR code until you press <strong>Post</strong>.
+    </p>
+
+    <div id="exitTicketQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
+
+    <button
+      id="copyExitTicketUrlBtn"
+      class="primary-button secondary-button"
+      type="button"
+      style="width:100%; margin-top:0;"
+    >
+      Copy exit ticket link
+    </button>
+
+    <div class="controls-row" style="margin-top: 16px; margin-bottom: 0;">
+      <button id="refreshExitTicketsBtn" class="primary-button secondary-button" type="button">Refresh exit tickets</button>
+      <button id="clearExitTicketsBtn" class="primary-button danger-button" type="button">Clear exit tickets</button>
+    </div>
+  </div>
+`;
+      const qrContainer = document.getElementById('exitTicketQrCode');
+      const copyButton = document.getElementById('copyExitTicketUrlBtn');
+      const refreshBtn = document.getElementById('refreshExitTicketsBtn');
+      const clearBtn = document.getElementById('clearExitTicketsBtn');
+      const postButton = document.getElementById('postExitTicketBtn');
+
+      const titleInput = document.getElementById('exitTicketTitleInput');
+      const prompt1Input = document.getElementById('exitTicketPrompt1Input');
+      const prompt2Input = document.getElementById('exitTicketPrompt2Input');
+      const prompt3Input = document.getElementById('exitTicketPrompt3Input');
+
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+          text: exitTicketFormUrl,
+          width: 180,
+          height: 180
+        });
+      }
+
+      if (titleInput) {
+        titleInput.addEventListener('input', (event) => {
+          exitTicketTitle = event.target.value;
+        });
+      }
+
+      if (prompt1Input) {
+        prompt1Input.addEventListener('input', (event) => {
+          exitTicketPrompt1 = event.target.value;
+        });
+      }
+
+      if (prompt2Input) {
+        prompt2Input.addEventListener('input', (event) => {
+          exitTicketPrompt2 = event.target.value;
+        });
+      }
+
+      if (prompt3Input) {
+        prompt3Input.addEventListener('input', (event) => {
+          exitTicketPrompt3 = event.target.value;
+        });
+      }
+
+      if (postButton) {
+        postButton.addEventListener('click', () => {
+          exitTicketPostedTitle = exitTicketTitle;
+          exitTicketPostedPrompt1 = exitTicketPrompt1;
+          exitTicketPostedPrompt2 = exitTicketPrompt2;
+          exitTicketPostedPrompt3 = exitTicketPrompt3;
+          renderExitTicketApplet();
+        });
+      }
+
+      if (copyButton) {
+        copyButton.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(getExitTicketFormUrl());
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+              copyButton.textContent = 'Copy exit ticket link';
+            }, 1500);
+          } catch (err) {
+            copyButton.textContent = 'Copy failed';
+            setTimeout(() => {
+              copyButton.textContent = 'Copy exit ticket link';
+            }, 1500);
+          }
+        };
+      }
+
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', loadExitTicketsFromAppsScript);
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', clearExitTickets);
+      }
     }
 
     function renderApplet() {
@@ -1341,6 +1685,8 @@ function renderSignupQrCode() {
         renderColdCallApplet();
       } else if (activeTab === 'free-response') {
         renderFreeResponseApplet();
+      } else if (activeTab === 'exit-ticket') {
+        renderExitTicketApplet();
       } else {
         renderPlaceholderApplet(active);
       }
@@ -1351,7 +1697,6 @@ function renderSignupQrCode() {
       toolIcon.textContent = active.icon;
       toolTitle.textContent = active.label;
       toolBlurb.textContent = active.blurb;
-      currentFocus.textContent = `${active.label} is selected and ready.`;
       renderApplet();
     }
 
@@ -1361,9 +1706,26 @@ function renderSignupQrCode() {
     renderSignupPanel();
     loadRosterFromAppsScript();
     loadResponsesFromAppsScript();
+    loadExitTicketsFromAppsScript();
 
     setInterval(loadRosterFromAppsScript, 10000);
-    setInterval(loadResponsesFromAppsScript, 5000);
+setInterval(() => {
+  if (freeResponsePostedQuestion.trim() !== '') {
+    loadResponsesFromAppsScript();
+  }
+}, 5000);
+
+setInterval(() => {
+  const hasPostedExitTicket =
+    exitTicketPostedTitle.trim() !== '' ||
+    exitTicketPostedPrompt1.trim() !== '' ||
+    exitTicketPostedPrompt2.trim() !== '' ||
+    exitTicketPostedPrompt3.trim() !== '';
+
+  if (hasPostedExitTicket) {
+    loadExitTicketsFromAppsScript();
+  }
+}, 5000);
   </script>
 </body>
 </html>
