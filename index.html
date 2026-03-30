@@ -6,18 +6,22 @@
   <title>Classroom Tools</title>
   <style>
     :root {
-      --bg: #f3f6fb;
-      --panel: #ffffff;
-      --panel-soft: #f8fafc;
-      --border: #dbe3ee;
-      --text: #0f172a;
-      --muted: #5b6474;
-      --accent: #2563eb;
-      --danger: #A51C30;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-md: 14px;
+--bg: #cbd5e1;
+--panel: #ffffff;
+--panel-soft: #e2e8f0;
+--border: #cbd5e1;
+--text: #020617;
+--muted: #475569;
+
+--accent: #095f6e;     /* cyan */
+--accent-2: #0d7c8f;   /* darker cyan */
+--danger: #dc2626;
+
+--shadow: 0 14px 40px rgba(2, 6, 23, 0.12);
+
+--radius-xl: 24px;
+--radius-lg: 18px;
+--radius-md: 14px;
     }
 
     * { box-sizing: border-box; }
@@ -339,7 +343,9 @@
       color: var(--text);
     }
 
-    .control-select,
+    .control-select {
+    	width: 220px;
+    },
     .control-input,
     .control-textarea {
       width: 100%;
@@ -767,6 +773,12 @@
         blurb: 'Choose students randomly without repeats.'
       },
       {
+ 		id: 'poll',
+		label: 'Live Poll',
+		icon: '📊',
+ 		blurb: 'Create a multiple-choice poll and display live results.'
+	  },
+      {
         id: 'free-response',
         label: 'Live Responses',
         icon: '💬',
@@ -808,6 +820,19 @@
     let exitTicketPostedPrompt2 = '';
     let exitTicketPostedPrompt3 = '';
 
+	let livePollResponses = [];
+	let pollQuestion = '';
+	let pollOption1 = '';
+	let pollOption2 = '';
+	let pollOption3 = '';
+	let pollOption4 = '';
+	
+	let pollPostedQuestion = '';
+	let pollPostedOption1 = '';
+	let pollPostedOption2 = '';
+	let pollPostedOption3 = '';
+	let pollPostedOption4 = '';
+
     const tabsContainer = document.getElementById('tabs');
     const toolIcon = document.getElementById('toolIcon');
     const toolTitle = document.getElementById('toolTitle');
@@ -819,7 +844,199 @@
     const refreshRosterBtn = document.getElementById('refreshRosterBtn');
     const clearRosterBtn = document.getElementById('clearRosterBtn');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzX8b3FZ8ZiLh6VHMGBrYgFyzo-gYWKkdRHZ09DNzM5qqSeUY3tsTfvmz4QcYLZycstjA/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzWBFoCa5_CS2PTYims9bR-EVLFUweUlLWPOpnZ-m8_cwtcZDLJLxqIfLv8YiDmMJAFg/exec';
+
+	function getPollFormUrl() {
+  	  return buildUrl(APPS_SCRIPT_URL, {
+    	mode: 'pollForm',
+    	question: pollPostedQuestion,
+   	    option1: pollPostedOption1,
+   		option2: pollPostedOption2,
+   		option3: pollPostedOption3,
+   		option4: pollPostedOption4
+ 	 });
+	}
+
+	function loadPollResultsFromAppsScript() {
+  const callbackName = 'handlePollResults_' + Date.now();
+  const script = document.createElement('script');
+
+  window[callbackName] = function (data) {
+    if (data && data.ok && Array.isArray(data.responses)) {
+      livePollResponses = data.responses;
+      if (activeTab === 'poll') {
+        renderPollApplet();
+      }
+    }
+    delete window[callbackName];
+    script.remove();
+  };
+
+  script.src = `${APPS_SCRIPT_URL}?mode=pollResults&prefix=${callbackName}`;
+  document.body.appendChild(script);
+}
+
+function clearPollResults() {
+  const confirmed = window.confirm('Clear all poll responses?');
+  if (!confirmed) return;
+
+  const callbackName = 'handleClearPollResults_' + Date.now();
+  const script = document.createElement('script');
+
+  window[callbackName] = function (data) {
+    if (data && data.ok) {
+      livePollResponses = [];
+      if (activeTab === 'poll') {
+        renderPollApplet();
+      }
+    } else {
+      alert('Could not clear poll results.');
+    }
+    delete window[callbackName];
+    script.remove();
+  };
+
+  script.src = `${APPS_SCRIPT_URL}?mode=clearPollResults&prefix=${callbackName}`;
+  document.body.appendChild(script);
+}
+
+function renderPollApplet() {
+  const pollFormUrl = getPollFormUrl();
+
+  const postedOptions = [
+    pollPostedOption1,
+    pollPostedOption2,
+    pollPostedOption3,
+    pollPostedOption4
+  ].filter(v => String(v).trim() !== '');
+
+  const counts = Object.fromEntries(postedOptions.map(option => [option, 0]));
+  livePollResponses.forEach(item => {
+    if (counts[item.choice] !== undefined) {
+      counts[item.choice] += 1;
+    }
+  });
+
+  const maxCount = Math.max(1, ...Object.values(counts));
+
+  const barsHtml = postedOptions.length
+    ? postedOptions.map(option => {
+        const count = counts[option] || 0;
+        const width = (count / maxCount) * 100;
+        return `
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; gap:12px; margin-bottom:6px;">
+              <strong>${escapeHtml(option)}</strong>
+              <span>${count}</span>
+            </div>
+            <div style="height:18px; background:#e5e7eb; border-radius:999px; overflow:hidden;">
+              <div style="height:100%; width:${width}%; background:#2563eb;"></div>
+            </div>
+          </div>
+        `;
+      }).join('')
+    : `<div class="empty-note">Post a poll to display results.</div>`;
+
+  appletBox.innerHTML = `
+    <div class="free-response-ui">
+      <div class="applet-title">Poll setup</div>
+
+      <label class="control-label" for="pollQuestionInput">Question</label>
+      <input id="pollQuestionInput" class="control-input" value="${escapeHtml(pollQuestion)}" />
+
+      <label class="control-label" for="pollOption1Input" style="margin-top:12px;">(a)</label>
+      <input id="pollOption1Input" class="control-input" value="${escapeHtml(pollOption1)}" />
+
+      <label class="control-label" for="pollOption2Input" style="margin-top:12px;">(b)</label>
+      <input id="pollOption2Input" class="control-input" value="${escapeHtml(pollOption2)}" />
+
+      <label class="control-label" for="pollOption3Input" style="margin-top:12px;">(c)</label>
+      <input id="pollOption3Input" class="control-input" value="${escapeHtml(pollOption3)}" />
+
+      <label class="control-label" for="pollOption4Input" style="margin-top:12px;">(d)</label>
+      <input id="pollOption4Input" class="control-input" value="${escapeHtml(pollOption4)}" />
+
+   
+
+      <div class="controls-row" style="margin-top:12px; margin-bottom:0;">
+        <button id="postPollBtn" class="primary-button" type="button">Post</button>
+      </div>
+
+  <p class="small-note" style="margin-top:12px;">
+                The QR code becomes live once you press <strong>Post</strong>.
+              </p>
+
+  <div id="pollQrCode" style="display:flex; justify-content:center; margin:16px 0 12px;"></div>
+
+<div style="display:flex; justify-content:center; margin-top:16px;">
+  <div style="display:flex; gap:12px; width:440px;">
+    <button
+      id="copyPollUrlBtn"
+      class="primary-button secondary-button"
+      type="button"
+      style="flex:1; margin-top:0;"
+    >
+      Copy poll link
+    </button>
+
+    <button
+      id="clearPollResultsBtn"
+      class="primary-button danger-button"
+      type="button"
+      style="flex:1; margin-top:0;"
+    >
+      Clear poll results
+    </button>
+  </div>
+</div>
+
+      <div class="info-card" style="margin-top:16px;">
+        <strong>Posted question</strong>
+        <div>${escapeHtml(pollPostedQuestion || 'Nothing posted yet.')}</div>
+      </div>
+
+      <div class="info-card" style="margin-top:16px;">
+        <strong>Live results</strong>
+        <div style="margin-top:12px;">
+          ${barsHtml}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('pollQuestionInput').addEventListener('input', e => pollQuestion = e.target.value);
+  document.getElementById('pollOption1Input').addEventListener('input', e => pollOption1 = e.target.value);
+  document.getElementById('pollOption2Input').addEventListener('input', e => pollOption2 = e.target.value);
+  document.getElementById('pollOption3Input').addEventListener('input', e => pollOption3 = e.target.value);
+  document.getElementById('pollOption4Input').addEventListener('input', e => pollOption4 = e.target.value);
+
+  document.getElementById('postPollBtn').addEventListener('click', () => {
+    pollPostedQuestion = pollQuestion;
+    pollPostedOption1 = pollOption1;
+    pollPostedOption2 = pollOption2;
+    pollPostedOption3 = pollOption3;
+    pollPostedOption4 = pollOption4;
+    livePollResponses = [];
+    renderPollApplet();
+    loadPollResultsFromAppsScript();
+  });
+
+  const qrContainer = document.getElementById('pollQrCode');
+  qrContainer.innerHTML = '';
+  new QRCode(qrContainer, {
+    text: pollFormUrl,
+    width: 180,
+    height: 180
+  });
+
+  document.getElementById('copyPollUrlBtn').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(getPollFormUrl());
+    } catch (err) {}
+  };
+
+  document.getElementById('clearPollResultsBtn').addEventListener('click', clearPollResults);
+}
 
     function buildUrl(base, params) {
       const url = new URL(base, window.location.href);
@@ -1007,30 +1224,6 @@ function loadResponsesFromAppsScript() {
       document.body.appendChild(script);
     }
 
-    function clearExitTickets() {
-      const confirmed = window.confirm('Clear all exit tickets?');
-      if (!confirmed) return;
-
-      const callbackName = 'handleClearExitTickets_' + Date.now();
-      const script = document.createElement('script');
-
-      window[callbackName] = function (data) {
-        if (data && data.ok) {
-          liveExitTickets = [];
-          if (activeTab === 'exit-ticket') {
-            renderExitTicketApplet();
-          }
-          loadExitTicketsFromAppsScript();
-        } else {
-          alert('Could not clear exit tickets.');
-        }
-        delete window[callbackName];
-        script.remove();
-      };
-
-      script.src = `${APPS_SCRIPT_URL}?mode=clearExitTickets&prefix=${callbackName}`;
-      document.body.appendChild(script);
-    }
 
     studentInput.addEventListener('input', () => {
       manualStudents = parseStudents(studentInput.value);
@@ -1591,7 +1784,6 @@ appletBox.innerHTML = `
 `;
       const qrContainer = document.getElementById('exitTicketQrCode');
       const copyButton = document.getElementById('copyExitTicketUrlBtn');
-      const clearBtn = document.getElementById('clearExitTicketsBtn');
       const postButton = document.getElementById('postExitTicketBtn');
 
       const titleInput = document.getElementById('exitTicketTitleInput');
@@ -1661,10 +1853,6 @@ if (postButton) {
         };
       }
 
-
-      if (clearBtn) {
-        clearBtn.addEventListener('click', clearExitTickets);
-      }
     }
 
     function renderApplet() {
@@ -1677,8 +1865,10 @@ if (postButton) {
         renderFreeResponseApplet();
       } else if (activeTab === 'exit-ticket') {
         renderExitTicketApplet();
-      } else {
-        renderPlaceholderApplet(active);
+      } else if (activeTab === 'poll') {
+  		renderPollApplet();
+	  } else {
+        renderTableSortApplet();
       }
     }
 
@@ -1697,6 +1887,19 @@ function renderContent() {
     loadRosterFromAppsScript();
  
 setInterval(loadRosterFromAppsScript, 10000);
+
+setInterval(() => {
+  const hasPostedPoll =
+    pollPostedQuestion.trim() ||
+    pollPostedOption1.trim() ||
+    pollPostedOption2.trim() ||
+    pollPostedOption3.trim() ||
+    pollPostedOption4.trim();
+
+  if (hasPostedPoll) {
+    loadPollResultsFromAppsScript();
+  }
+}, 5000);
 
 setInterval(() => {
   if (freeResponsePostedQuestion.trim()) {
